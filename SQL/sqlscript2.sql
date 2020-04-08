@@ -1,0 +1,1 @@
+UPDATE `dbwgrpg`.`tblnpc` SET `strAIName` = 'AlwaysFeedRandom' WHERE `tblnpc`.`intNPCID` = 2;

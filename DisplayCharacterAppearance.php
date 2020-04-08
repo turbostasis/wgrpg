@@ -1,0 +1,97 @@
+<?php
+
+include_once 'fatAdjs.php';
+
+class DisplayCharacterAppearance{
+
+	public function __construct(){
+		
+	}
+	
+	public static function toHTML(){
+		ob_start(); ?>
+		
+			<div class='characterDiv hidden' id='characterDivAppearance'>
+				<div class='spacedDiv'>
+					You are <b><?=getFatAdj($_SESSION['objRPGCharacter']->getBMI(), true)?> human <?=strtolower($_SESSION['objRPGCharacter']->getGender())?></b> that weighs <b><?=round($_SESSION['objRPGCharacter']->getWeight(), 2)?></b> pounds, standing at <b><?=$_SESSION['objRPGCharacter']->getHeightInFeet()?></b> tall.
+					<br/><br/>
+					You have <b><?=strtolower($_SESSION['objRPGCharacter']->getHairLength())?> <?=strtolower($_SESSION['objRPGCharacter']->getHairColour())?> hair</b>, striking <b><?=strtolower($_SESSION['objRPGCharacter']->getEyeColour())?> eyes</b>, and a <b><?=strtolower($_SESSION['objRPGCharacter']->getEthnicity())?></b> skintone.
+					<br/><br/>
+					<?=getStareDownText($_SESSION['objRPGCharacter']->getFace())?>
+					<br/><br/>
+					<?php
+						$arrClothingTypes = array("Armour", "Top", "Bottom");
+						$blnIsEquipped = false;
+						foreach($arrClothingTypes as $strClothingType){
+							$strGetFunction = "getEquipped" . $strClothingType;
+							if($_SESSION['objRPGCharacter']->$strGetFunction()->getXML() !== null){
+								$objXML = new RPGOutfitReader($_SESSION['objRPGCharacter']->$strGetFunction()->getXML());
+								if(isset($objXML)){
+									global $arrArmourBodyParts;
+									global $arrTopBodyParts;
+									global $arrBottomBodyParts;
+									global $arrClothingSizes;
+									if($strClothingType == 'Armour'){
+										$arrBodyParts = $arrArmourBodyParts;
+									}
+									else if($strClothingType == 'Top'){
+										$arrBodyParts = $arrTopBodyParts;
+									}
+									else{
+										$arrBodyParts = $arrBottomBodyParts;
+									}
+									$blnIsEquipped = true;
+									$intClothingBMI = $arrClothingSizes[$_SESSION['objRPGCharacter']->$strGetFunction()->getSize()];
+									$intCharacterBMI = $_SESSION['objRPGCharacter']->getBMI();
+									$intBMIDifference = round($intCharacterBMI - $intClothingBMI);
+									if(isset($_SESSION['objUISettings']->getOverrides()[2]) || $_SESSION['objRPGCharacter']->$strGetFunction()->getSize() == 'Stretch'){
+										$intBMIDifference = 0;
+									}
+									$node = $objXML->findNodeBetweenBMI('appearance', $intBMIDifference);
+									if(isset($node[0]->overall->text)){
+										echo $node[0]->overall->text . " ";
+									}
+									foreach($arrBodyParts as $strBodyPart){
+										$strBodyPartLC = strtolower($strBodyPart);
+										$strGetRipFunction = "get" . $strBodyPart . "RipLevel";
+										$armourRipLevel = $_SESSION['objRPGCharacter']->getBody()->$strGetRipFunction();
+										if(isset($_SESSION['objUISettings']->getOverrides()[2]) || $_SESSION['objRPGCharacter']->$strGetFunction()->getSize() == 'Stretch'){
+											$armourRipLevel = 0;
+										}
+										$node = $objXML->findNodeAtBMI('appearance', $armourRipLevel);
+										if(isset($node[0]->$strBodyPartLC->text)){
+											echo $node[0]->$strBodyPartLC->text . " ";
+										}
+									}
+									echo "<br/>";
+								}
+							}
+						}
+						if(!$blnIsEquipped){
+							echo "You are not wearing any clothes or armour.<br/>" . getBellyText($_SESSION['objRPGCharacter']->getBelly());
+						}
+					?>
+					<br/>
+					<?=getFPEquipmentText($_SESSION['objRPGCharacter']->getEquippedWeapon()->getItemName())?>
+					<br/><br/>
+					<?php
+					
+					$arrBMIs = array(20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120);
+					$intClosestBMI = getClosest($_SESSION['objRPGCharacter']->getBMI(), $arrBMIs);
+					
+					?>
+					<object style="margin-top:-50px;margin-left:-20px;" data="SVG/<?=$intClosestBMI?>front.svg" type="image/svg+xml"></object>
+					<object style="margin-top:-50px;margin-left:-20px;" data="SVG/<?=$intClosestBMI?><?=$_SESSION['objRPGCharacter']->getBody()->getBodyType()?>.svg" type="image/svg+xml"></object>
+				</div>
+			</div>
+		
+		<?php
+		$strHTML = ob_get_contents();
+		ob_end_clean();
+		
+		echo $strHTML;
+	}
+
+}
+
+?>

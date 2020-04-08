@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event>
+	<type>Forced Event</type>
+	<end>2</end>
+	<dialog id="0">
+		<eventText>Do you wish to leave the tower and return to town?
+		</eventText>
+		<option id="1" action="exitFloor~1">Yes</option>
+		<option id="2">No</option>
+	</dialog>
+	<dialog id="1">
+	</dialog>
+	<dialog id="2">
+		<eventText>You have decided to continue exploring the tower.</eventText>
+	</dialog>
+</event>
