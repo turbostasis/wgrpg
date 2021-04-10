@@ -73,15 +73,6 @@ class DisplayCharacterAppearance{
 					?>
 					<br/>
 					<?=getFPEquipmentText($_SESSION['objRPGCharacter']->getEquippedWeapon()->getItemName())?>
-					<br/><br/>
-					<?php
-					
-					$arrBMIs = array(20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 120);
-					$intClosestBMI = getClosest($_SESSION['objRPGCharacter']->getBMI(), $arrBMIs);
-					
-					?>
-					<object style="margin-top:-50px;margin-left:-20px;" data="SVG/<?=$intClosestBMI?>front.svg" type="image/svg+xml"></object>
-					<object style="margin-top:-50px;margin-left:-20px;" data="SVG/<?=$intClosestBMI?><?=$_SESSION['objRPGCharacter']->getBody()->getBodyType()?>.svg" type="image/svg+xml"></object>
 				</div>
 			</div>
 		

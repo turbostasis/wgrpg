@@ -808,6 +808,8 @@ class RPGCharacter{
 	
 	public function eatItem($intItemID, $intItemInstanceID, $intHPHeal, $intFullness = 1){
 		$objItem = new RPGItem($intItemID);
+		$intHPHeal = $objItem->getHPHeal();
+		$intFullness = $objItem->getFullness();
 		$objItem->useItem($this);
 		$this->healHP($intHPHeal);
 		$this->_intCurrentHunger = min(($this->getStats()->getCombinedStatsSecondary('intMaxHunger') * 2), ($this->_intCurrentHunger + $intFullness));
