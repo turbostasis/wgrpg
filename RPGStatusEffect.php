@@ -118,7 +118,7 @@ class RPGStatusEffect{
 		$objDB = new Database();
 		$strSQL = "UPDATE tblcharacterstatuseffectxr
 					SET intTimeRemaining = " . ($this->_intTimeRemaining != null ? $objDB->quote($this->_intTimeRemaining) : $objDB->quote($this->_intDuration)) . "
-					WHERE intRPGCharacterID = " . $objDB->quote($intRPGCharacterID) . ", intStatusEffectID = " . $objDB->quote($this->_intStatusEffectID);
+					WHERE intRPGCharacterID = " . $objDB->quote($intRPGCharacterID) . " AND intStatusEffectID = " . $objDB->quote($this->_intStatusEffectID);
 		$objDB->query($strSQL);
 	}
 	
